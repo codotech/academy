@@ -1,27 +1,3 @@
-/**
- * TrackCard  STUB (you implement the body).
- *
- * Renders a single track. Includes a save/unsave action.
- *
- * Contract:
- *   - Receives a Track and a `saved` flag.
- *   - Emits a 'save' CustomEvent with detail = { track }     when user saves.
- *   - Emits a 'unsave' CustomEvent with detail = { id }       when user unsaves.
- *   - Bubbles, so the parent (results-grid or main) can listen on the container.
- *
- * Why this exists as a stub (not given):
- *   - Forces you to think about how unidirectional event flow works without
- *     a framework: parent owns state, children emit events, parent re-renders.
- *
- * Suggested Claude Code prompt:
- *   "Implement createTrackCard(props) in src/components/track-card.ts.
- *    Render a div.track-card with .track-art (cover_url image OR fallback ♪),
- *    .track-info (title + 'artist · album'), and .track-actions with one
- *    button.btn-icon. The button toggles between save/unsave based on props.saved.
- *    Add 'is-saved' class on the root when props.saved is true. The button
- *    dispatches a CustomEvent('save' or 'unsave', { detail, bubbles: true })."
- */
-
 import type { Track } from '../contracts.ts';
 
 export type TrackCardProps = {
@@ -29,11 +5,69 @@ export type TrackCardProps = {
   saved: boolean;
 };
 
-export function createTrackCard(_props: TrackCardProps): HTMLElement {
-  // TODO: implement the DOM tree described above.
-  // Return the root HTMLElement. Don't query the document; only build local DOM.
+export function createTrackCard(props: TrackCardProps): HTMLElement {
+  const { track, saved } = props;
+
   const root = document.createElement('div');
-  root.className = 'track-card';
-  root.textContent = '(track-card not implemented)';
+  root.className = saved ? 'track-card is-saved' : 'track-card';
+
+  const art = document.createElement('div');
+  art.className = 'track-art';
+  if (track.cover_url) {
+    const img = document.createElement('img');
+    img.src = track.cover_url;
+    img.alt = '';
+    img.loading = 'lazy';
+    art.appendChild(img);
+  } else {
+    art.textContent = '♪';
+  }
+  root.appendChild(art);
+
+  const info = document.createElement('div');
+  info.className = 'track-info';
+
+  const title = document.createElement('div');
+  title.className = 'track-title';
+  title.textContent = track.name;
+  info.appendChild(title);
+
+  const meta = document.createElement('div');
+  meta.className = 'track-meta';
+  meta.textContent = `${track.artist} · ${track.album}`;
+  info.appendChild(meta);
+
+  root.appendChild(info);
+
+  const actions = document.createElement('div');
+  actions.className = 'track-actions';
+
+  if (track.external_url) {
+    const link = document.createElement('a');
+    link.href = track.external_url;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    link.className = 'btn-icon';
+    link.setAttribute('aria-label', 'Open on Spotify');
+    link.textContent = '↗';
+    actions.appendChild(link);
+  }
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = saved ? 'btn-icon is-active' : 'btn-icon';
+  button.setAttribute('aria-label', saved ? 'Remove from history' : 'Save to history');
+  button.setAttribute('aria-pressed', String(saved));
+  button.textContent = saved ? '♥' : '♡';
+
+  button.addEventListener('click', () => {
+    const eventName = saved ? 'unsave' : 'save';
+    const detail = saved ? { id: track.id } : { track };
+    root.dispatchEvent(new CustomEvent(eventName, { detail, bubbles: true }));
+  });
+
+  actions.appendChild(button);
+  root.appendChild(actions);
+
   return root;
 }

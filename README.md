@@ -25,7 +25,7 @@ git checkout student/<your-name>
 ### Backend
 
 ```bash
-cd backend
+cd backend_old
 cp .env.example .env   # paste your Spotify credentials
 npm install
 npm run dev
@@ -36,7 +36,7 @@ npm run dev
 ### Frontend
 
 ```bash
-cd frontend
+cd frontend_old
 npm install
 npm run dev
 # → http://localhost:5173

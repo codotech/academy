@@ -101,10 +101,10 @@ Set up a GitHub Actions workflow that runs on every push to your branch.
 
 ```yaml
 - name: Typecheck
-  run: cd backend && npm run typecheck
+  run: cd backend_old && npm run typecheck
 
 - name: System tests
-  run: cd backend && npm run test:system
+  run: cd backend_old && npm run test:system
   env:
     SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
     SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}

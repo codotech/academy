@@ -9,8 +9,8 @@ set -euo pipefail
 #
 # Or run individual commands by copy-pasting them.
 #
-# Requires: curl, a running backend at http://localhost:3000
-# Start the backend: npm run dev (from demo/backend/)
+# Requires: curl, a running backend_old at http://localhost:3000
+# Start the backend_old: npm run dev (from demo/backend_old/)
 
 BASE_URL="${BASE_URL:-http://localhost:3000}"
 
@@ -39,7 +39,7 @@ echo ""
 
 # ---------------------------------------------------------------------------
 # 2. Happy path search
-#    Proves: the backend can authenticate with Spotify, execute a search,
+#    Proves: the backend_old can authenticate with Spotify, execute a search,
 #    and return a response matching SearchResponseSchema (results array of Track).
 #    Field names are snake_case: id, name, artist, album, preview_url,
 #    external_url, cover_url.
@@ -72,7 +72,7 @@ echo ""
 
 # ---------------------------------------------------------------------------
 # 3. Error: missing q parameter
-#    Proves: the backend validates that q is present.
+#    Proves: the backend_old validates that q is present.
 #    400 = client's fault. The request is malformed.
 #    The response must match ErrorResponseSchema: { "error": "<message>" }
 # ---------------------------------------------------------------------------
@@ -91,9 +91,9 @@ echo ""
 
 # ---------------------------------------------------------------------------
 # 4. Error: empty q parameter
-#    Proves: the backend validates that q is not just whitespace/empty.
+#    Proves: the backend_old validates that q is not just whitespace/empty.
 #    400 = client's fault. An empty string is not a valid search query.
-#    The Zod contract uses z.string().min(1) — the backend must mirror this.
+#    The Zod contract uses z.string().min(1) — the backend_old must mirror this.
 # ---------------------------------------------------------------------------
 
 echo "--- 4. GET /api/search?q= (empty q, expect 400) ---"
@@ -110,7 +110,7 @@ echo ""
 
 # ---------------------------------------------------------------------------
 # 5. Upstream failure (502)
-#    Proves: when Spotify is unreachable or returns an error, the backend
+#    Proves: when Spotify is unreachable or returns an error, the backend_old
 #    returns 502 (Bad Gateway) — not 500 and not Spotify's own status code.
 #
 #    502 vs 500: 502 means "I'm fine, but the upstream I depend on isn't."
@@ -121,14 +121,14 @@ echo ""
 #      - Break the Spotify credentials in your .env:
 #          SPOTIFY_CLIENT_ID=invalid
 #          SPOTIFY_CLIENT_SECRET=invalid
-#      - Restart the backend, then run:
+#      - Restart the backend_old, then run:
 #          curl -sS -i "http://localhost:3000/api/search?q=radiohead"
 #      - You should get 502 with an ErrorResponseSchema body.
 #
 #    You cannot reach this case without intentionally misconfiguring credentials
 #    or blocking outbound traffic to api.spotify.com. The example below is
 #    illustrative only — it points at a URL that will return a connection error,
-#    which your backend should handle as a 502.
+#    which your backend_old should handle as a 502.
 # ---------------------------------------------------------------------------
 
 echo "--- 5. 502 upstream failure (illustrative — see comment above) ---"
@@ -154,7 +154,7 @@ echo ""
 #    a normal error condition. Fix the bug; do not write code that deliberately
 #    triggers 500.
 #
-#    A correct backend implementation catches:
+#    A correct backend_old implementation catches:
 #      - Invalid input → 400
 #      - Spotify failures → 502
 #      - Everything else → 500 (the fallback, should be unreachable)

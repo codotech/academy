@@ -1,0 +1,133 @@
+/* ============================================
+   Music Finder  Layout
+   App shell, header, prompt placement, results grid.
+   ============================================ */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* --- Header --- */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(26, 26, 46, 0.85);
+  backdrop-filter: saturate(140%) blur(10px);
+  border-bottom: 1px solid var(--border);
+}
+
+.header-inner {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--space-md) var(--space-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-weight: 700;
+  font-size: 1.0625rem;
+  letter-spacing: -0.01em;
+}
+
+.brand-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--highlight), var(--accent));
+  display: grid;
+  place-items: center;
+  font-size: 0.95rem;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+/* --- Main --- */
+.main {
+  flex: 1;
+  width: 100%;
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--space-2xl) var(--space-lg) var(--space-3xl);
+}
+
+/* --- Prompt section --- */
+.prompt-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-2xl);
+}
+
+.prompt-headline {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--text-primary), var(--highlight));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.prompt-sub {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  max-width: 520px;
+}
+
+/* --- Results section --- */
+.results-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.section-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-sm);
+}
+
+.section-divider::before,
+.section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-md);
+}
+
+@media (max-width: 600px) {
+  .header-inner,
+  .main {
+    padding-left: var(--space-md);
+    padding-right: var(--space-md);
+  }
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+}
