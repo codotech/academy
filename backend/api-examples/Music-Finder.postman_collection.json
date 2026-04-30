@@ -1,0 +1,154 @@
+{
+  "info": {
+    "name": "Music Finder API",
+    "description": "API test collection for the Music Finder backend.\nBuilt as part of Codo Academy — Exercise 3 (Make It Shippable).\n\nSet the `baseUrl` collection variable to switch between local and production:\n- Local:      http://localhost:3000\n- Production: https://music-finder-backend.onrender.com (replace with your Render URL)\n\nContracts are defined in frontend/src/contracts.ts and must match the OpenAPI spec at openapi.yaml.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string",
+      "description": "Backend base URL. Change to your Render URL for production testing."
+    }
+  ],
+  "item": [
+    {
+      "name": "GET /health — expect 200",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        },
+        "description": "Health check endpoint. Returns { \"status\": \"ok\" } when the service is running.\nRender polls this during deployment — 200 means the container is ready for traffic."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status is 200', () => pm.response.to.have.status(200));",
+              "pm.test('body has status ok', () => {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body.status).to.equal('ok');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET /api/search?q=radiohead — expect 200",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/search?q=radiohead",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "search"],
+          "query": [
+            {
+              "key": "q",
+              "value": "radiohead"
+            }
+          ]
+        },
+        "description": "Happy path search. Expects a 200 with a results array of Track objects.\nEach track must have: id, name, artist, album, external_url (all non-empty strings),\nplus preview_url and cover_url (string URL or null).\n\nMatches SearchResponseSchema from frontend/src/contracts.ts."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status is 200', () => pm.response.to.have.status(200));",
+              "pm.test('body has results array', () => {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body).to.have.property('results');",
+              "    pm.expect(body.results).to.be.an('array');",
+              "});",
+              "pm.test('each track has required fields', () => {",
+              "    const body = pm.response.json();",
+              "    body.results.forEach((track) => {",
+              "        pm.expect(track.id).to.be.a('string').and.not.empty;",
+              "        pm.expect(track.name).to.be.a('string').and.not.empty;",
+              "        pm.expect(track.artist).to.be.a('string').and.not.empty;",
+              "        pm.expect(track.album).to.be.a('string');",
+              "        pm.expect(track.external_url).to.be.a('string').and.not.empty;",
+              "    });",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET /api/search (no q) — expect 400",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/search",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "search"]
+        },
+        "description": "Missing q parameter. The backend must return 400 (client's fault).\nResponse must match ErrorResponseSchema: { \"error\": \"<non-empty string>\" }."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status is 400', () => pm.response.to.have.status(400));",
+              "pm.test('body has error field', () => {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body).to.have.property('error');",
+              "    pm.expect(body.error).to.be.a('string').and.not.empty;",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "GET /api/search?q= (empty q) — expect 400",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/search?q=",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "search"],
+          "query": [
+            {
+              "key": "q",
+              "value": ""
+            }
+          ]
+        },
+        "description": "Empty q parameter. The backend must reject this with 400.\nAn empty string is not a valid search query — the Zod contract uses z.string().min(1)\nand the backend must enforce the same rule.\nResponse must match ErrorResponseSchema: { \"error\": \"<non-empty string>\" }."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('status is 400', () => pm.response.to.have.status(400));",
+              "pm.test('body has error field', () => {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body).to.have.property('error');",
+              "    pm.expect(body.error).to.be.a('string').and.not.empty;",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

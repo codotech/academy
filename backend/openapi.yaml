@@ -1,0 +1,238 @@
+openapi: 3.1.0
+
+info:
+  title: Music Finder API
+  version: 0.1.0
+  description: |
+    The backend API for the Music Finder application, built as part of the
+    Codo Academy system design course (Exercise 3 — Make It Shippable).
+
+    **Contract source of truth:** `frontend/src/contracts.ts` defines the Zod
+    schemas that the frontend validates against at runtime. The response shapes
+    documented here must match those schemas exactly. If they diverge, the
+    frontend will raise a `ContractError`.
+
+    **Authentication:** This API has no public authentication. Spotify credentials
+    (`SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET`) are held exclusively on the
+    backend. The server exchanges them for a short-lived access token using
+    Spotify's Client Credentials OAuth flow (server-to-server, no user login
+    required). The token is cached for up to one hour. Credentials are never
+    sent to or accessible by the browser.
+
+servers:
+  - url: http://localhost:3000
+    description: Local development
+  - url: https://music-finder-backend.onrender.com
+    description: >
+      Production (replace this URL with your own Render service URL after
+      you deploy in Exercise 3)
+
+tags:
+  - name: meta
+    description: Service health and status
+  - name: search
+    description: Music search via Spotify
+
+paths:
+  /health:
+    get:
+      tags:
+        - meta
+      summary: Health check
+      description: >
+        Returns 200 when the service is running. Render polls this endpoint
+        during deployment — if it does not return 200, Render holds traffic
+        on the previous container.
+      operationId: getHealth
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                properties:
+                  status:
+                    type: string
+                    enum:
+                      - ok
+                    example: ok
+              example:
+                status: ok
+
+  /api/search:
+    get:
+      tags:
+        - search
+      summary: Search for tracks
+      description: >
+        Searches Spotify for tracks matching the query string. Returns up to
+        20 results. Each track in the response matches the `TrackSchema` defined
+        in `frontend/src/contracts.ts`.
+
+
+        The backend authenticates to Spotify using the Client Credentials flow
+        before proxying the search. If Spotify returns an error or is unreachable,
+        the endpoint returns 502 rather than leaking Spotify's own status code.
+      operationId: searchTracks
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: >
+            Search query string. Must be at least one non-whitespace character.
+            Passed directly to the Spotify search API.
+          schema:
+            type: string
+            minLength: 1
+          example: radiohead
+      responses:
+        '200':
+          description: Search succeeded. Array may be empty if Spotify found no matches.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+              example:
+                results:
+                  - id: 7LVHVU3tWfcxj5aiPFEW4Q
+                    name: Creep
+                    artist: Radiohead
+                    album: Pablo Honey
+                    preview_url: https://p.scdn.co/mp3-preview/abc123
+                    external_url: https://open.spotify.com/track/7LVHVU3tWfcxj5aiPFEW4Q
+                    cover_url: https://i.scdn.co/image/ab67616d0000b273a03696716c9ee605006047fd
+                  - id: 2dkBiRpB4eTlHPKVwHqFCG
+                    name: Karma Police
+                    artist: Radiohead
+                    album: OK Computer
+                    preview_url: null
+                    external_url: https://open.spotify.com/track/2dkBiRpB4eTlHPKVwHqFCG
+                    cover_url: https://i.scdn.co/image/ab67616d0000b273c8b444df094279e70d0ed856
+        '400':
+          description: >
+            Bad request. The `q` parameter is missing or empty. This is the
+            client's fault — fix the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: 'Missing required query parameter: q'
+        '500':
+          description: >
+            Unhandled internal error. This should not be reachable in correct
+            code. If you see this, there is a bug in the backend error handling.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: Internal server error
+        '502':
+          description: >
+            Bad gateway. Spotify returned an error or was unreachable. This is
+            an upstream failure — not the client's fault and not a backend bug.
+            The backend caught Spotify's error and surfaced it as 502 rather
+            than leaking Spotify's own status code.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: Upstream search service unavailable
+
+components:
+  schemas:
+    Track:
+      type: object
+      description: >
+        A single track as returned by the `/api/search` endpoint. Field names
+        are snake_case and mirror the simplified Spotify track shape defined
+        in `frontend/src/contracts.ts` (`TrackSchema`).
+      required:
+        - id
+        - name
+        - artist
+        - album
+        - external_url
+      properties:
+        id:
+          type: string
+          minLength: 1
+          description: Spotify track ID. Stable across requests.
+          example: 7LVHVU3tWfcxj5aiPFEW4Q
+        name:
+          type: string
+          minLength: 1
+          description: Track title.
+          example: Creep
+        artist:
+          type: string
+          minLength: 1
+          description: >
+            Primary artist name. If the track has multiple artists, they are
+            joined with ", ".
+          example: Radiohead
+        album:
+          type: string
+          description: Album name.
+          example: Pablo Honey
+        preview_url:
+          type: string
+          format: uri
+          nullable: true
+          description: >
+            URL to a 30-second MP3 preview. Null when Spotify does not provide
+            a preview for this track. Do not render a broken `<audio>` element
+            when this is null — check before using.
+          example: https://p.scdn.co/mp3-preview/abc123
+        external_url:
+          type: string
+          format: uri
+          description: >
+            Public Spotify URL for the track (open.spotify.com/track/...).
+            Always present.
+          example: https://open.spotify.com/track/7LVHVU3tWfcxj5aiPFEW4Q
+        cover_url:
+          type: string
+          format: uri
+          nullable: true
+          description: >
+            Album cover image URL. Null when Spotify does not provide cover art.
+            Do not render a broken `<img>` element when this is null — check
+            before using.
+          example: https://i.scdn.co/image/ab67616d0000b273a03696716c9ee605006047fd
+
+    SearchResponse:
+      type: object
+      description: >
+        Successful response from `GET /api/search`. Mirrors `SearchResponseSchema`
+        in `frontend/src/contracts.ts`. The `results` array is empty when
+        Spotify found no matches — this is not an error.
+      required:
+        - results
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Track'
+          description: Array of matching tracks. May be empty.
+
+    ErrorResponse:
+      type: object
+      description: >
+        Error response returned on 400, 500, and 502. Mirrors `ErrorResponseSchema`
+        in `frontend/src/contracts.ts`. Every non-2xx response from this API
+        uses this shape — consistent error shapes let the frontend handle errors
+        generically without branching on status code.
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          minLength: 1
+          description: Human-readable error message. Never empty.
+          example: 'Missing required query parameter: q'

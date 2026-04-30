@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# PostToolUse hook — fires after every Edit or Write.
+# PostToolUse hook that fires after every Edit or Write.
 # If a key file was substantially changed, nudges Claude contextually.
 #
 
@@ -30,7 +30,7 @@ for stub in "${FRONTEND_STUBS[@]}"; do
     if [[ -f "$FILE" ]] && grep -q "TODO:" "$FILE" 2>/dev/null; then
       exit 0
     fi
-    echo "[AMBIENT] Progress detected on $stub. Mention naturally — not as a directive — that /checkpoint exists when they feel ready: 'Looks like we made real progress on $stub. When you feel like you've got a handle on it, /checkpoint is there if you want to consolidate what you just built.'"
+    echo "[AMBIENT] Progress detected on $stub. Mention naturally, not as a directive, that /checkpoint exists when they feel ready: 'Looks like we made real progress on $stub. When you feel like you've got a handle on it, /checkpoint is there if you want to consolidate what you just built.'"
     exit 0
   fi
 done
@@ -48,14 +48,14 @@ declare -a BACKEND_FILES=(
 
 for bf in "${BACKEND_FILES[@]}"; do
   if [[ "$FILE" == *"$bf"* ]]; then
-    echo "[AMBIENT] Backend/infra file edited: $bf. If this is a meaningful milestone (endpoint working, Docker building, test passing), consider nudging a commit: 'That looks like a good checkpoint — what changed and why? Let's commit it.'"
+    echo "[AMBIENT] Backend/infra file edited: $bf. If this is a meaningful milestone (endpoint working, Docker building, test passing), consider nudging a commit: 'That looks like a good checkpoint. What changed and why? Let's commit it.'"
     exit 0
   fi
 done
 
 # CI pipeline
 if [[ "$FILE" == *".github/workflows/"* ]]; then
-  echo "[AMBIENT] CI config edited. After the edit, suggest pushing to verify: 'CI config changed — let's push and see if the pipeline is happy.'"
+  echo "[AMBIENT] CI config edited. After the edit, suggest pushing to verify: 'CI config changed. Let's push and see if the pipeline is happy.'"
   exit 0
 fi
 

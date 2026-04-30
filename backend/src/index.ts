@@ -1,35 +1,31 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import { searchTracks, SpotifyError } from './spotify.js';
+import swaggerUi from 'swagger-ui-express';
+import { readFileSync } from 'node:fs';
+import { parse } from 'yaml';
+import { searchRouter } from './search.route.js';
+
+// Fail fast if Spotify credentials are missing
+if (!process.env.SPOTIFY_CLIENT_ID || !process.env.SPOTIFY_CLIENT_SECRET) {
+  console.error('FATAL: SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET must be set');
+  process.exit(1);
+}
 
 const app = express();
 
-app.use(cors());
+app.use(cors({ origin: process.env.CORS_ORIGIN ?? '*' }));
 app.use(express.json());
+
+// OpenAPI / Swagger UI
+const openapiSpec = parse(readFileSync(new URL('../openapi.yaml', import.meta.url), 'utf-8'));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpec));
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
 
-app.get('/api/search', async (req, res) => {
-  const q = typeof req.query.q === 'string' ? req.query.q.trim() : '';
-  if (!q) {
-    return res.status(400).json({ error: 'Query parameter "q" is required' });
-  }
-
-  try {
-    const results = await searchTracks(q);
-    res.json({ results });
-  } catch (err) {
-    if (err instanceof SpotifyError) {
-      console.error('[spotify]', err.message);
-      return res.status(502).json({ error: 'Upstream Spotify request failed' });
-    }
-    console.error('[search]', err);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
+app.use(searchRouter);
 
 const PORT = process.env.PORT ?? 3000;
 app.listen(PORT, () => {

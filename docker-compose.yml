@@ -1,10 +1,10 @@
 services:
   backend:
-    build: backend_old
+    build: ./backend
     ports:
       - "3000:3000"
     env_file:
-      - backend_old/.env
+      - ./backend/.env
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
       interval: 10s

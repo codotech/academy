@@ -4,13 +4,13 @@ Stop implementing. Do not write code until this is complete.
 
 ## What you do
 
-Ask exactly 3 questions about what was most recently built. One at a time. Wait for the answer before asking the next. This is a conversation — not a quiz.
+Ask exactly 3 questions about what was most recently built. One at a time. Wait for the answer before asking the next. This is a conversation, not a quiz.
 
 Pick questions from the bank below that match the student's current work area. If they just finished Docker work, ask Docker questions. If they just set up CI, ask CI questions. Use your judgment.
 
 ## How you evaluate answers
 
-- **Shallow or vague:** Don't say it's wrong. Ask "Say more — what would you actually see in the browser/console/terminal if that's true?"
+- **Shallow or vague:** Don't say it's wrong. Ask "Say more. What would you actually see in the browser/console/terminal if that's true?"
 - **Good answer:** "Exactly. And what does that mean for...?"
 - **Wrong:** Don't correct directly. Ask a follow-up that leads them to discover it.
 
@@ -66,6 +66,27 @@ Pick questions from the bank below that match the student's current work area. I
 - "Why is `.env` in `.gitignore` but `.env.example` is committed? What would go wrong if you committed `.env`?"
 - "Your CI needs the Spotify secret but `.env` isn't in the repo. How does CI get it?"
 
+### After reading concept 6 (Why CI Exists)
+- "CI stands for Continuous Integration. What exactly is being integrated? It's not 'tests with code.'"
+- "Five developers each work alone on branches for a week, then try to merge Friday. What goes wrong and why?"
+- "Claude generated 800 lines in one afternoon. You push them as one commit. CI lights up red on 12 things. What went wrong with the process, not the code?"
+
+### After reading concept 7 (CI Building Blocks)
+- "Your pipeline runs lint, typecheck, and tests. Could you skip lint and typecheck and just run tests? What would you lose?"
+- "A teammate says 'lint is just style, I'm disabling it.' What's wrong with that argument?"
+- "Why does lint run before typecheck, and typecheck before tests? What's the principle behind the ordering?"
+
+### After reading concept 8 (Test Taxonomy)
+- "A team has 4000 unit tests at 92% coverage. A small change breaks production. All tests pass. How?"
+- "What's the difference between a white-box test and a black-box test? Give an example of each for Music Finder."
+- "Your unit test mocks the database and passes. In production, the query fails. What does this tell you about what unit tests actually prove?"
+- "Why does Codo use system tests instead of unit tests? What's the trade-off?"
+
+### After reading concept 9 (Artifacts and Versioning)
+- "Staging works. Production breaks. The team says they deployed 'the same code.' What likely went wrong?"
+- "Your Docker image is tagged `latest`. Can you tell what code is running in production? Why or why not?"
+- "What does 'build once, deploy anywhere' mean? Why is rebuilding the image for each environment dangerous?"
+
 ---
 
 ## Exercise 2 Checkpoints (retained for reference)
@@ -77,7 +98,7 @@ Pick questions from the bank below that match the student's current work area. I
 
 ### After search endpoint
 - "Why does the backend exist at all? Why can't the frontend call Spotify directly?"
-- "You return 400 for empty query and 502 for Spotify failure. Why two different codes — why not just 500 for everything?"
+- "You return 400 for empty query and 502 for Spotify failure. Why two different codes? Why not just 500 for everything?"
 - "What would happen in the frontend if your backend returned `title` instead of `name` in the response?"
 
 ### After full system works
@@ -87,7 +108,7 @@ Pick questions from the bank below that match the student's current work area. I
 
 ### After api.ts
 - "Spotify just changed their API response to add a required field your schema doesn't expect. What happens in the frontend?"
-- "Why three error classes — NetworkError, BackendError, ContractError — instead of just throwing a generic Error?"
+- "Why three error classes (NetworkError, BackendError, ContractError) instead of just throwing a generic Error?"
 - "What does `SearchResponseSchema.safeParse(body)` return when it fails? What's in that return value?"
 
 ### After state.ts

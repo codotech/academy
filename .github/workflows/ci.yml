@@ -14,8 +14,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: cd backend_old && npm ci
-      - run: cd backend_old && npm run lint
+      - run: cd backend && npm ci
+      - run: cd backend && npm run lint
 
   typecheck:
     runs-on: ubuntu-latest
@@ -24,8 +24,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: cd backend_old && npm ci
-      - run: cd backend_old && npm run typecheck
+      - run: cd backend && npm ci
+      - run: cd backend && npm run typecheck
 
   system-test:
     runs-on: ubuntu-latest
@@ -35,9 +35,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: cd backend_old && npm ci
-      - run: cd backend_old && bash scripts/build-test-image.sh
-      - run: cd backend_old && npm run test:system
+      - run: cd backend && npm ci
+      - run: cd backend && bash scripts/build-test-image.sh
+      - run: cd backend && npm run test:system
         env:
           SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
@@ -47,4 +47,4 @@ jobs:
     needs: [system-test]
     steps:
       - uses: actions/checkout@v4
-      - run: cd backend_old && docker build -t music-finder-backend_old:latest .
+      - run: cd backend && docker build -t music-finder-backend:latest .
