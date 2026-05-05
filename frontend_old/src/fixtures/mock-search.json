@@ -1,0 +1,58 @@
+{
+  "results": [
+    {
+      "id": "5ihDGnhQgMA0F0tk9fNLlA",
+      "name": "Get Lucky (feat. Pharrell Williams & Nile Rodgers)",
+      "artist": "Daft Punk, Pharrell Williams, Nile Rodgers",
+      "album": "Random Access Memories",
+      "preview_url": "https://p.scdn.co/mp3-preview/preview-1.mp3",
+      "external_url": "https://open.spotify.com/track/5ihDGnhQgMA0F0tk9fNLlA",
+      "cover_url": "https://i.scdn.co/image/cover-daft-punk-ram.jpg"
+    },
+    {
+      "id": "0DiWol3AO6WpXZgp0goxAV",
+      "name": "One More Time",
+      "artist": "Daft Punk",
+      "album": "Discovery",
+      "preview_url": "https://p.scdn.co/mp3-preview/preview-2.mp3",
+      "external_url": "https://open.spotify.com/track/0DiWol3AO6WpXZgp0goxAV",
+      "cover_url": "https://i.scdn.co/image/cover-discovery.jpg"
+    },
+    {
+      "id": "2takcwOaAZWiXQijPHIx7B",
+      "name": "Time",
+      "artist": "Hans Zimmer",
+      "album": "Inception (Music from the Motion Picture)",
+      "preview_url": null,
+      "external_url": "https://open.spotify.com/track/2takcwOaAZWiXQijPHIx7B",
+      "cover_url": "https://i.scdn.co/image/cover-inception.jpg"
+    },
+    {
+      "id": "1z6WtY7X4HQJvzxC4UgkSf",
+      "name": "Strobe",
+      "artist": "deadmau5",
+      "album": "For Lack of a Better Name",
+      "preview_url": "https://p.scdn.co/mp3-preview/preview-4.mp3",
+      "external_url": "https://open.spotify.com/track/1z6WtY7X4HQJvzxC4UgkSf",
+      "cover_url": "https://i.scdn.co/image/cover-strobe.jpg"
+    },
+    {
+      "id": "6vN77lE9LK6HP2DewaN6HZ",
+      "name": "Midnight City",
+      "artist": "M83",
+      "album": "Hurry Up, We're Dreaming",
+      "preview_url": "https://p.scdn.co/mp3-preview/preview-5.mp3",
+      "external_url": "https://open.spotify.com/track/6vN77lE9LK6HP2DewaN6HZ",
+      "cover_url": "https://i.scdn.co/image/cover-m83.jpg"
+    },
+    {
+      "id": "3n3Ppam7vgaVa1iaRUc9Lp",
+      "name": "Mr. Brightside",
+      "artist": "The Killers",
+      "album": "Hot Fuss",
+      "preview_url": "https://p.scdn.co/mp3-preview/preview-6.mp3",
+      "external_url": "https://open.spotify.com/track/3n3Ppam7vgaVa1iaRUc9Lp",
+      "cover_url": "https://i.scdn.co/image/cover-hot-fuss.jpg"
+    }
+  ]
+}

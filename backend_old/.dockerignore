@@ -1,0 +1,7 @@
+node_modules
+dist
+.env
+*.md
+tests
+api-examples
+.gitignore
