@@ -36,6 +36,7 @@ jobs:
         with:
           node-version: 22
       - run: cd backend && npm ci
+      - run: cd frontend && npm ci
       - run: cd backend && bash scripts/build-test-image.sh
       - run: cd backend && npm run test:system
         env:
