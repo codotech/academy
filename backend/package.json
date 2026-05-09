@@ -9,7 +9,7 @@
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
     "lint": "echo 'lint placeholder — add eslint config'",
-    "test:system": "vitest run --config vitest.system.config.ts"
+    "test:system": "npx dotenv-cli -e .env -- vitest run --config vitest.system.config.ts"
   },
   "dependencies": {
     "cors": "^2.8.5",
