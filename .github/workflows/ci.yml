@@ -48,3 +48,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: cd backend && docker build -t music-finder-backend:latest .
+      - name: Push to Docker Hub
+        run: |
+          echo "${{ secrets.DOCKERHUB_TOKEN_AMIT }}" | docker login -u "amitco321" --password-stdin
+          docker tag music-finder-backend:latest amitco321/codo-course:${{ github.sha }}
+          docker push amitco321/codo-course:${{ github.sha }}
